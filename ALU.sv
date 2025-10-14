@@ -40,11 +40,11 @@ always_comb begin
         end
         // STL works with signed
         SLT: begin 
-            outputData = $signed(data1) < $signed(data1) ? 32'b1 : 32'b0;
+            outputData = $signed(data1) < $signed(data2) ? 32'b1 : 32'b0;
         end
         // SLTU works with unsigned
         SLTU: begin 
-            outputData = data1 < (data2) ? 32'b1 : 32'b0;
+            outputData = (data1 < data2) ? 32'b1 : 32'b0;
         end
         // Prevent latches
         default: outputData = 32'b0; 

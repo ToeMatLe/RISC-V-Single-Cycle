@@ -1,7 +1,7 @@
 module InstructionMem (
     input logic [31:0] address,
     output logic [31:0] instruction
-)
+);
 // 64 x 32 memory storage, and array of instructions
 logic [31:0] rom_memory [63:0];
 

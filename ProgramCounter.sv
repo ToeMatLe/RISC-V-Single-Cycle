@@ -4,7 +4,7 @@ module ProgramCounter (
     input logic clk,
     input logic reset_n,
     
-    input logic [1:0] branEnable,
+    input logic branEnable,
     input logic [31:0] branAddress, //address should be smaller
     output logic [31:0] outputPCAddress
 )
