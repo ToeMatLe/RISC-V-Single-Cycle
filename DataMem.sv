@@ -9,7 +9,6 @@ module DataMem (
 logic [31:0] memory [1023:0];
 
 // Read Data is Combinational
-
 // Use word address (ignore bottom 2 bits). Check bounds are natural for synthesis simulations.
 assign rdata = memory[address[11:2]];
 
