@@ -1,0 +1,59 @@
+rsicv - instruction set 
+- creates machine code to output
+
+
+sequential - give inputs, wait till next clock edge for outputs
+    always_ff @(posedge clk) begin
+        hogoqhrgoqehrgoqhoghogh
+    end
+    - only use if you need a past input to decide your current input
+    - everything in the sequential block is updated at once on the clock edge when using non-blocking operator
+combinational - give inputs, get outputs hopefully by the next clock edge
+    always_comb () begin
+        aghiorghoiagoihrg
+    end
+    - use blocking operator, just =
+    - how you make paralelism
+    - GPUs nowadays do important operations in parallel (matmul, convolution) -> systolic array
+    - cant use non-blocking operators in combinational period
+    - cant use previous values in combinatonal (inferred latch) ALWAYS SIGN DEFULT VALUES
+
+
+Non-blocking <= :
+is used in sequential logic, all non-blocking operations happen at the clock edge (note uses values in previous clock cycles)
+this happens on clock edge. Helps with paralelism
+inputRegA <= inputA;
+inputRegB <= inputB;
+multiplyReg = inputAReg * inputBReg
+
+critical path:
+- longest combinational path
+- limiter or clk frequency
+*longer combinational time gives more time for say paralelism, if everything was 1ns, its the idea of software
+
+Clock Cycle 1: get inputs from a buffer -> decide which inputs to use -> pass those inputs to the array -> register inputs 4 ns
+Clock Cycle 2: get inputs from register -> multiplier -> output, 4ns
+
+longer one
+Clock Cycle 1: get inputs from a buffer -> decide which inputs to use -> pass those inputs to the array -> inputs would be multiplied together 8 ns
+f = 1 / T = 125 MHz
+multiplyReg <= inputA * inputB;
+
+can use (Quartus, vivado) for:
+-behavioral simulations -> test the correctess of code (can your code execute?) 
+-synthesizing -> try to see if the code can go on the fpga 
+    -testbenches dont work, tests to see if meets clk frequecy, power draw, puts your .sv files ito hardware
+
+instruction set (feed machine code -> does operation)
+program counter -> stores the address of current instruction
+instruction memory for storing instructions in registers
+    registers; can move, empty, change (MUTABLE)
+data memory
+    we have to read and write explicity
+
+this jumps to an address if a condition happens
+beq x1, x0, 0x8 // 0x0
+dummy instruction // 0x4
+dummy instruction // 0x8
+
+
