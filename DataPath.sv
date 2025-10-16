@@ -4,11 +4,7 @@
 module DataPath (
     input logic clk,
     input logic reset_n,
-
-    input logic regWrite, aluSrc, memWrite, branEnable, jumpEnable, 
-    input aluOperations aluOp, 
 );
-
 ControlUnit controlUnit (
     .opcode(opcode),
     .funct3(funct3),
@@ -20,6 +16,20 @@ ControlUnit controlUnit (
     .branEnable(branEnable),
     .jumpEnable(jumpEnable),
     .aluOp(aluOp)
+);
+logic [31:0] alu_in2; // second ALU operand after mux
+logic [31:0] immediate; // sign/zero-extended immediate (32-bit)
+// Immediate generator: extract proper immediate based on instruction format
+ImmGen immgen (
+    .instruction(instruction),
+    .imm(immediate)
+);
+assign alu_in2 = aluSrc ? immediate : readData2; // Mux for ALU second operand
+ALU alu (
+    .operation(aluOp),
+    .data1(readData1),
+    .data2(alu_in2), // Mux output
+    .outputData(outputData)
 );
 ProgramCounter programCounter (
     .clk(clk),
@@ -33,12 +43,6 @@ ProgramCounter programCounter (
 InstructionMem instructionMem (
     .address(pcAddress),
     .instruction(instruction)
-);
-ALU alu (
-    .operation(aluOp),
-    .data1(readData1),
-    .data2(aluSecondOperand),
-    .outputData(aluResult)
 );
 DataMem dataMem (
     .clk(clk),
