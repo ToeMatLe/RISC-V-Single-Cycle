@@ -24,7 +24,6 @@ logic [31:0] memReadData; // Data read from Data Memory
 logic [31:0] branch_target_address; // Branch target address
 logic [31:0] jump_target_address; // Jump target address 
 logic [31:0] outputPCAddress; // Output PC Address
-
 logic [31:0] pcPlus4 
 assign pcPlus4 = pcAddress + 4;
 
@@ -103,8 +102,19 @@ InstructionMem instructionMem (
     .address(pcAddress),
     .instruction(instruction)
 );
-// Mux for Data Memory read data or ALU output to write back to Register File
-assign memReadData = (opcode == LOAD) ? readData2 = memReadData : outputData;
+// 3 way Mux for Data Memory read data or ALU output to write back to Register File
+always_comb begin 
+    if (opcode == LOAD)begin 
+        readData2 = memReadData
+    end
+    else if (opcode == JAL) begin 
+        readData2 = pcPlus4;
+    end
+    else begin 
+        readData2 = outputData;
+    end
+end
+
 DataMem dataMem (
     .clk(clk),
     .memWrite(memWrite),
