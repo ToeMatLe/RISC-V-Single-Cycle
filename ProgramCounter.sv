@@ -17,11 +17,11 @@ logic [31:0] nextPC;
 // If BranchEnable, go to the branch address, if not skip 4 to go to the next instruction
 always_comb begin
     if (jump_enable) begin
-        pc_next = jump_target_address;
+        nextPC = jump_target_address;
     end else if (branEnable) begin
-        pc_next = branAddress;
+        nextPC = branAddress;
     end else begin
-        pc_next = currentPCAddress + 4;
+        nextPC = currentPCAddress + 4;
     end
 end
 
