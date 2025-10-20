@@ -8,6 +8,7 @@ module DataPath (
 // Control Signals (from a RISC-V ControlUnit)
 logic regWrite, memWrite, aluSrc, branEnable, jumpEnable;
 aluOperations aluOp;
+
 // Wires for interconnecting modules
 logic [31:0] pcAddress; // Current PC Address
 logic [31:0] instruction; // Current Instruction
@@ -23,6 +24,9 @@ logic [31:0] memReadData; // Data read from Data Memory
 logic [31:0] branch_target_address; // Branch target address
 logic [31:0] jump_target_address; // Jump target address 
 logic [31:0] outputPCAddress; // Output PC Address
+
+logic [31:0] pcPlus4 
+assign pcPlus4 = pcAddress + 4;
 
 // Wires for Register File
 logic [4:0] rs1, rs2, rd; // register specifiers from instruction
@@ -99,6 +103,8 @@ InstructionMem instructionMem (
     .address(pcAddress),
     .instruction(instruction)
 );
+// Mux for Data Memory read data or ALU output to write back to Register File
+assign memReadData = (opcode == LOAD) ? readData2 = memReadData : outputData;
 DataMem dataMem (
     .clk(clk),
     .memWrite(memWrite),
@@ -112,7 +118,7 @@ RegisterFile registerFile (
     .rs1(rs1),
     .rs2(rs2),
     .rd(rd),
-    .writeData(memReadData), // Write back data from memory
+    .writeData(memReadData), // Write back data from data memory
     .readData1(readData1),
     .readData2(readData2)
 );
