@@ -83,6 +83,7 @@ assign alu_zero_flag = (reg_read_data1 == reg_read_data2);
 assign branch_target_address = pc_current + sign_extended_immediate;
 assign branch_condition_met  = branEnable & alu_zero_flag; 
 
+// Definew JALR or JAL
 assign jump_target_address = (opcode == JALR) ? (reg_read_data1 + sign_extended_immediate) : (pc_current + sign_extended_immediate);
 
 ProgramCounter programCounter (
