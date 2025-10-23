@@ -56,6 +56,8 @@ beq x1, x0, 0x8 // 0x0
 dummy instruction // 0x4
 dummy instruction // 0x8
 
-
-run simulations
+testing on vivado
+launch_simulations
+relaunch_simulations
+run_simulations
 run 1ns

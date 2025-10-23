@@ -82,7 +82,7 @@ ALU alu (
 // Check branch condition met
 logic branch_condition_met;
 logic alu_zero_flag; 
-assign alu_zero_flag = (rs1 == rs2);
+assign alu_zero_flag = (readData1 == readData2);
 assign branch_target_address = pcAddress + sign_extended_immediate;
 assign branch_condition_met  = branEnable & alu_zero_flag; 
 
@@ -103,15 +103,16 @@ InstructionMem instructionMem (
     .instruction(instruction)
 );
 // 3 way Mux for Data Memory read data or ALU output to write back to Register File
+logic [31:0] regWriteData; // This is the new wire
 always_comb begin 
     if (opcode == LOAD)begin 
-        readData2 = memReadData;
+        regWriteData = memReadData;
     end
     else if (opcode == JAL) begin 
-        readData2 = pcPlus4;
+        regWriteData = pcPlus4;
     end
     else begin 
-        readData2 = outputData;
+        regWriteData = outputData;
     end
 end
 
@@ -119,7 +120,7 @@ DataMem dataMem (
     .clk(clk),
     .memWrite(memWrite),
     .address(outputData), // Use ALU result as address
-    .writeData(readData2),
+    .writeData(regWriteData), // Data from readData2 is written to memory
     .readData(memReadData)
 );
 RegisterFile registerFile (
@@ -128,7 +129,7 @@ RegisterFile registerFile (
     .rs1(rs1),
     .rs2(rs2),
     .rd(rd),
-    .writeData(memReadData), // Write back data from data memory
+    .writeData(regWriteData), // Write back data from data memory (3 way mux output)
     .readData1(readData1),
     .readData2(readData2)
 );
