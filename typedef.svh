@@ -1,3 +1,6 @@
+'indef TYPEDEF_SVH
+'define TYPEDEF_SVH
+
 typedef enum logic [3:0] {
     ADD = 4'h0, // 4'b0000
     SUB = 4'h1, // 4'b0001
@@ -32,3 +35,4 @@ typedef enum logic [2:0] {
     BLTU = 3'b110, // < unsigned
     BGEU = 3'b111 // >= unsigned
 } branchTypes;
+'endif

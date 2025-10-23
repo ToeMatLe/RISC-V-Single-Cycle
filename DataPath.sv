@@ -3,7 +3,7 @@
 
 module DataPath (
     input logic clk,
-    input logic reset_n,
+    input logic reset_n
 );
 // Control Signals (from a RISC-V ControlUnit)
 logic regWrite, memWrite, aluSrc, branEnable, jumpEnable;
@@ -24,7 +24,7 @@ logic [31:0] memReadData; // Data read from Data Memory
 logic [31:0] branch_target_address; // Branch target address
 logic [31:0] jump_target_address; // Jump target address 
 logic [31:0] outputPCAddress; // Output PC Address
-logic [31:0] pcPlus4 
+logic [31:0] pcPlus4;
 assign pcPlus4 = pcAddress + 4;
 
 // Wires for Register File
@@ -82,12 +82,12 @@ ALU alu (
 // Check branch condition met
 logic branch_condition_met;
 logic alu_zero_flag; 
-assign alu_zero_flag = (reg_read_data1 == reg_read_data2);
-assign branch_target_address = pc_current + sign_extended_immediate;
+assign alu_zero_flag = (rs1 == rs2);
+assign branch_target_address = pcAddress + sign_extended_immediate;
 assign branch_condition_met  = branEnable & alu_zero_flag; 
 
-// Definew JALR or JAL
-assign jump_target_address = (opcode == JALR) ? (reg_read_data1 + sign_extended_immediate) : (pc_current + sign_extended_immediate);
+// Define JALR or JAL
+assign jump_target_address = (opcode == JALR) ? (rs1 + sign_extended_immediate) : (pcAddress + sign_extended_immediate);
 
 ProgramCounter programCounter (
     .clk(clk),
@@ -105,7 +105,7 @@ InstructionMem instructionMem (
 // 3 way Mux for Data Memory read data or ALU output to write back to Register File
 always_comb begin 
     if (opcode == LOAD)begin 
-        readData2 = memReadData
+        readData2 = memReadData;
     end
     else if (opcode == JAL) begin 
         readData2 = pcPlus4;

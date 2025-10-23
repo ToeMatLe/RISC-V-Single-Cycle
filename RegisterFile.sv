@@ -12,7 +12,7 @@ module RegisterFile (
     // Write Address
     input logic [4:0] waddress,
     // Write Data
-    input logic [31:0] wdata,
+    input logic [31:0] wdata
 );
 // Storage for the 32 Registers, all 32-bit sized
 logic [31:0] registers [31:0];

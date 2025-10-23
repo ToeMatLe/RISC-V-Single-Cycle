@@ -57,3 +57,5 @@ dummy instruction // 0x4
 dummy instruction // 0x8
 
 
+run simulations
+run 1ns

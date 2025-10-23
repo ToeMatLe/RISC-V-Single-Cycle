@@ -2,10 +2,10 @@
 `include "typedef.svh"
 
 module ALU_tb; 
-aluOperations operation,
-logic [31:0] data1,    
-logic [31:0] data2,
-logic [31:0] outputData
+aluOperations operation;
+logic [31:0] data1;
+logic [31:0] data2;
+logic [31:0] outputData;
 
 ALU dut (
     .operation  (operation),

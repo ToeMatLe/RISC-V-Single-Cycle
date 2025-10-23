@@ -9,7 +9,8 @@ module ProgramCounter (
     input logic [31:0] branAddress, //address should be smaller
     input logic [31:0] jump_target_address, //address should be smaller
     output logic [31:0] outputPCAddress
-)
+);
+
 logic [31:0] currentPCAddress;
 logic [31:0] nextPC;
 
