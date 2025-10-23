@@ -23,9 +23,16 @@ module DataPath_tb;
   // ---------------------------------------------------------------------------
 
   // Pack immediate with sign extension helpers
-  function automatic logic [31:0] sext(input int value, input int bits);
-    sext = {{(32-bits){value[bits-1]}}, value[bits-1:0]};
-  endfunction
+function automatic logic [31:0] sext(input int value, input int bits);
+  logic [31:0] tmp;
+  begin
+    tmp = 32'b0;
+    tmp[bits-1:0] = value[bits-1:0];      // copy lower bits
+    for (int i = bits; i < 32; i++)       // fill upper bits with sign
+      tmp[i] = value[bits-1];
+    sext = tmp;
+  end
+endfunction
 
   // R-type: OP = 7'b0110011
   function automatic logic [31:0] R(

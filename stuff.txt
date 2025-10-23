@@ -61,3 +61,7 @@ launch_simulations
 relaunch_simulations
 run_simulations
 run 1ns
+
+Git commands to Help
+git clone https://github.com/ToeMatLe/RISC-V-Single-Cycle/
+git pull --rebase //get up to date
