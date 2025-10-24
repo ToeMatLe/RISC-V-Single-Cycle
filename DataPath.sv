@@ -43,7 +43,7 @@ assign funct7 = instruction[31:25];
 always_comb begin
     // Based on the RISC-V reference card formats
     case (opcode)
-        I:      sign_extended_immediate = {{20{instruction[11]}}, instruction[31:20]};
+        I:      sign_extended_immediate = {{20{instruction[31]}}, instruction[31:20]};
         LOAD:   sign_extended_immediate = {{20{instruction[31]}}, instruction[31:20]};
         JALR:   sign_extended_immediate = {{20{instruction[31]}}, instruction[31:20]};
         STORE:  sign_extended_immediate = {{20{instruction[31]}}, instruction[31:25], instruction[11:7]};
@@ -69,7 +69,6 @@ ControlUnit controlUnit (
 );
 // Check if immediate is needed for ALU second operand
 logic [31:0] alu_in2; // second ALU operand after mux
-logic immediate = instruction[31:20]; // immediate holds 2^8 bits, could extend later??
 assign alu_in2 = aluSrc ? sign_extended_immediate : readData2; // Mux for ALU second operand
 
 ALU alu (
@@ -87,7 +86,7 @@ assign branch_target_address = pcAddress + sign_extended_immediate;
 assign branch_condition_met  = branEnable & alu_zero_flag; 
 
 // Define JALR or JAL
-assign jump_target_address = (opcode == JALR) ? (rs1 + sign_extended_immediate) : (pcAddress + sign_extended_immediate);
+assign jump_target_address = (opcode == JALR) ? (readData1 + sign_extended_immediate) : (pcAddress + sign_extended_immediate);
 
 ProgramCounter programCounter (
     .clk(clk),
@@ -120,17 +119,17 @@ DataMem dataMem (
     .clk(clk),
     .memWrite(memWrite),
     .address(outputData), // Use ALU result as address
-    .writeData(regWriteData), // Data from readData2 is written to memory
-    .readData(memReadData)
+    .wdata(regWriteData), // Data from readData2 is written to memory
+    .rdata(memReadData)
 );
 RegisterFile registerFile (
     .clk(clk),
     .regWrite(regWrite),
-    .rs1(rs1),
-    .rs2(rs2),
-    .rd(rd),
-    .writeData(regWriteData), // Write back data from data memory (3 way mux output)
-    .readData1(readData1),
-    .readData2(readData2)
+    .raddress1(rs1),
+    .raddress2(rs2),
+    .waddress(rd),
+    .wdata(regWriteData), // Write back data from data memory (3 way mux output)
+    .rdata1(readData1),
+    .rdata2(readData2)
 );
 endmodule

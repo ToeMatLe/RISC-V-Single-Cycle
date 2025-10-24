@@ -56,12 +56,21 @@ beq x1, x0, 0x8 // 0x0
 dummy instruction // 0x4
 dummy instruction // 0x8
 
+Git commands to Help
+git clone https://github.com/ToeMatLe/RISC-V-Single-Cycle/
+git pull --rebase //get up to date
+
 testing on vivado
 launch_simulations
 relaunch_simulations
 run_simulations
 run 1ns
 
-Git commands to Help
-git clone https://github.com/ToeMatLe/RISC-V-Single-Cycle/
-git pull --rebase //get up to date
+
+get_value {/dut/registerFile/registers[1]}
+get_value {/dut/registerFile/registers[2]}
+get_value {/dut/registerFile/registers[3]}
+
+get_value {/dut/instructionMem/rom_memory[0]}
+get_value {/dut/instructionMem/rom_memory[1]}
+get_value {/dut/instructionMem/rom_memory[2]}

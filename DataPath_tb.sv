@@ -177,8 +177,9 @@ endfunction
 
     // --- CASE 0: initialize a few registers with ADDI ------------------------
     // x1 = 10, x2 = -3, x3 = 0x1234
+    // register is being truncated somewhere
     ROMW( 0, I(12'sd10,  5'd0, F_ADDI, 5'd1, OP_IMM));  // addi x1,x0,10      ; init positive
-    ROMW( 1, I(12'sd-3,  5'd0, F_ADDI, 5'd2, OP_IMM));  // addi x2,x0,-3      ; init negative
+    ROMW( 1, I(12'$signed(-3),  5'd0, F_ADDI, 5'd2, OP_IMM));  // addi x2,x0,-3      ; init negative
     ROMW( 2, I(12'sd0x123,5'd0, F_ADDI, 5'd3, OP_IMM)); // addi x3,x0,0x123   ; small hex
 
     // --- CASE 1: arithmetic/logic R-type ------------------------------------
