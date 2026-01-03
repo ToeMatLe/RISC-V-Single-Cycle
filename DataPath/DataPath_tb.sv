@@ -22,18 +22,6 @@ module DataPath_tb;
   // RV32I instruction encoders (helpers so we can author assembly in TB code)
   // ---------------------------------------------------------------------------
 
-  // Pack immediate with sign extension helpers
-function automatic logic [31:0] sext(input int value, input int bits);
-  logic [31:0] tmp;
-  begin
-    tmp = 32'b0;
-    tmp[bits-1:0] = value[bits-1:0];      // copy lower bits
-    for (int i = bits; i < 32; i++)       // fill upper bits with sign
-      tmp[i] = value[bits-1];
-    sext = tmp;
-  end
-endfunction
-
   // R-type: OP = 7'b0110011
   function automatic logic [31:0] R(
       input logic [6:0]  funct7,
@@ -108,7 +96,7 @@ endfunction
   localparam [6:0] OP_IMM  = 7'b0010011; // I-type ALU immediates
   localparam [6:0] LOAD    = 7'b0000011; // LW
   localparam [6:0] STORE   = 7'b0100011; // SW
-  localparam [6:0] BRANCH  = 7'b1100011; // BEQ/BNE/BLT/…
+  localparam [6:0] BRANCH  = 7'b1100011; // BEQ/BNE/BLT/...
   localparam [6:0] LUI     = 7'b0110111;
   localparam [6:0] AUIPC   = 7'b0010111;
   localparam [6:0] JAL     = 7'b1101111;
@@ -143,7 +131,7 @@ endfunction
   localparam [2:0] F_BGE = 3'b101;
 
   // ---------------------------------------------------------------------------
-  // Program: we’ll fill instruction ROM via hierarchy:
+  // Program: we'll fill instruction ROM via hierarchy:
   //   dut.instructionMem.rom_memory[idx] = 32'hXXXXXXXX;
   // (if your instance names differ, adjust here).
   // ---------------------------------------------------------------------------
@@ -172,15 +160,16 @@ endfunction
   initial begin
     // reset
     reset_n = 0;
-    step(2);
+    step(5); // Let a few cycles pass and stabilize
     reset_n = 1;
 
     // --- CASE 0: initialize a few registers with ADDI ------------------------
     // x1 = 10, x2 = -3, x3 = 0x1234
     // register is being truncated somewhere
-    ROMW( 0, I(12'sd10,  5'd0, F_ADDI, 5'd1, OP_IMM));  // addi x1,x0,10      ; init positive
-    ROMW( 1, I(12'$signed(-3),  5'd0, F_ADDI, 5'd2, OP_IMM));  // addi x2,x0,-3      ; init negative
-    ROMW( 2, I(12'sd0x123,5'd0, F_ADDI, 5'd3, OP_IMM)); // addi x3,x0,0x123   ; small hex
+    ROMW( 0, I(12'sd10,   5'd0, F_ADDI, 5'd1, OP_IMM));  // addi x1,x0,10
+    ROMW( 1, I(-12'sd3, 5'd0, F_ADDI, 5'd2, OP_IMM));  // addi x2,x0,-3
+    ROMW( 2, I(12'sh123,  5'd0, F_ADDI, 5'd3, OP_IMM));  // addi x3,x0,0x123
+
 
     // --- CASE 1: arithmetic/logic R-type ------------------------------------
     // x4 = x1 + x2 = 7
@@ -198,13 +187,13 @@ endfunction
     // x9 = x1 << 1
     // x10= x3 >> 2 (logical)
     // x11= x2 >>> 1 (arithmetic, stays negative)
-    ROMW( 8,  R(7'b0, 5'd1,5'd1, F_SLL,      5'd9,  OP));          // sll x9,x1,x1 (using x1=10 → shift 10 bits; just to exercise datapath)
+    ROMW( 8,  R(7'b0, 5'd1,5'd1, F_SLL,      5'd9,  OP));          // sll x9,x1,x1 (using x1=10 -> shift 10 bits; just to exercise datapath)
     ROMW( 9,  R(F7_SRL,5'd1,5'd3, F_SRL_SRA, 5'd10, OP));          // srl x10,x3,x1
     ROMW(10,  R(F7_SRA,5'd1,5'd2, F_SRL_SRA, 5'd11, OP));          // sra x11,x2,x1
 
     // --- CASE 3: set-less-than (signed/unsigned) -----------------------------
-    // x12 = (x2 < x1) signed → 1  (-3 < 10)
-    // x13 = (x2 < x1) unsigned → 0 (0xFFFF_FFFD < 10 ? no)
+    // x12 = (x2 < x1) signed -> 1  (-3 < 10)
+    // x13 = (x2 < x1) unsigned -> 0 (0xFFFF_FFFD < 10 ? no)
     ROMW(11, R(7'b0, 5'd2,5'd1, F_SLT,  5'd12, OP));               // slt  x12,x1,x2  (NB: ordering in R is rs2,rs1)
     ROMW(12, R(7'b0, 5'd2,5'd1, F_SLTU, 5'd13, OP));               // sltu x13,x1,x2
 
@@ -219,7 +208,7 @@ endfunction
     ROMW(15, I(12'sd10, 5'd0, F_ADDI, 5'd15, OP_IMM));              // x15 = 10
     ROMW(16, B(13'sd2,   5'd15,5'd1, F_BEQ, BRANCH));               // beq x1,x15, +2   ; skip over next ADDI
     ROMW(17, I(12'sd99,  5'd0, F_ADDI, 5'd16, OP_IMM));             // (skipped if BEQ taken)
-    ROMW(18, B(13'sd2,   5'd15,5'd1, F_BNE, BRANCH));               // bne x1,x15, +2   ; not taken → fall-through
+    ROMW(18, B(13'sd2,   5'd15,5'd1, F_BNE, BRANCH));               // bne x1,x15, +2   ; not taken -> fall-through
     ROMW(19, I(12'sd7,   5'd0, F_ADDI, 5'd16, OP_IMM));             // x16 = 7
 
     // --- CASE 6: Jumps (JAL / JALR) -----------------------------------------
@@ -227,7 +216,7 @@ endfunction
     ROMW(20, J(21'sd2, 5'd17, JAL));                                // jal x17, +2
     ROMW(21, I(12'sd111,5'd0, F_ADDI, 5'd18, OP_IMM));              // (skipped)
     ROMW(22, I(12'sd5,  5'd0, F_ADDI, 5'd18, OP_IMM));              // x18 = 5
-    // JALR: x19 = ret addr; target = x18 + 0 → jump over next ADDI
+    // JALR: x19 = ret addr; target = x18 + 0 -> jump over next ADDI
     ROMW(23, I(12'sd0, 5'd18, 3'b000, 5'd1, JALR));                 // jalr x1,x18,0  (use rd=x1 as link demo)
     ROMW(24, I(12'sd222,5'd0, F_ADDI, 5'd20, OP_IMM));              // (skipped)
     ROMW(25, I(12'sd6,  5'd0, F_ADDI, 5'd20, OP_IMM));              // x20 = 6
@@ -258,7 +247,7 @@ endfunction
 
     // CASE 2: shifts (exact values depend on your shift semantics;
     // our program used variable shifts to just exercise the paths)
-    // Check they executed at all (not zero) — feel free to tighten if desired:
+    // Check they executed at all (not zero) -- feel free to tighten if desired:
     assert (RF(9)  !== 32'd0) else $fatal("SLL did not execute");
     assert (RF(10) !== 32'd0) else $fatal("SRL did not execute");
     assert (RF(11) !== 32'd0) else $fatal("SRA did not execute");
@@ -279,8 +268,7 @@ endfunction
     assert (RF(18) == 32'd5)  else $fatal("JAL target block failed");
     assert (RF(20) == 32'd6)  else $fatal("JALR target block failed");
 
-    $display("DataPath program completed — all checks passed.");
+    $display("DataPath program completed -- all checks passed.");
     $finish;
   end
-
 endmodule

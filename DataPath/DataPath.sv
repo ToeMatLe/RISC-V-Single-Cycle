@@ -83,7 +83,7 @@ logic branch_condition_met = 1'b0;
 logic alu_zero_flag = 1'b0;   
 assign alu_zero_flag = (readData1 == readData2);
 assign branch_target_address = pcAddress + sign_extended_immediate;
-assign branch_condition_met  = BRANCH & alu_zero_flag; 
+assign branch_condition_met = (opcode == BRANCH) && branEnable && alu_zero_flag;
 
 // Define JALR or JAL
 assign jump_target_address = (opcode == JALR) ? (readData1 + sign_extended_immediate) : (pcAddress + sign_extended_immediate);
@@ -101,6 +101,7 @@ InstructionMem instructionMem (
     .address(pcAddress),
     .instruction(instruction)
 );
+
 // 3 way Mux for Data Memory read data or ALU output to write back to Register File
 logic [31:0] regWriteData; // This is the new wire
 always_comb begin 

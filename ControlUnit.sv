@@ -27,7 +27,7 @@ always_comb begin
     aluSrc = 1'b0;
     branEnable = 1'b0;
     jumpEnable = 1'b0;
-    aluOp = 4'b0000;  // Default now is to ADD
+    aluOp = ADD // Default now is to ADD, 4'b0000;
 
     case (opcode)
         R: begin 
