@@ -9,7 +9,7 @@ The design follows the classic **single-cycle datapath model** taught in compute
 
 ## Software Used
 
-### Xilinx Vivado (Version 2024.1)
+### Xilinx Vivado (Version 2025.2)
 Xilinx Vivado is an **industry-level hardware design tool** used for:
 - RTL design and behavioral simulation  
 - Gate-level and schematic generation  
