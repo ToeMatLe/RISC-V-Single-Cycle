@@ -79,11 +79,11 @@ ALU alu (
 );
 
 // Check branch condition met
-logic branch_condition_met;
-logic alu_zero_flag; 
+logic branch_condition_met = 1'b0;   
+logic alu_zero_flag = 1'b0;   
 assign alu_zero_flag = (readData1 == readData2);
 assign branch_target_address = pcAddress + sign_extended_immediate;
-assign branch_condition_met  = branEnable & alu_zero_flag; 
+assign branch_condition_met  = BRANCH & alu_zero_flag; 
 
 // Define JALR or JAL
 assign jump_target_address = (opcode == JALR) ? (readData1 + sign_extended_immediate) : (pcAddress + sign_extended_immediate);
@@ -119,7 +119,7 @@ DataMem dataMem (
     .clk(clk),
     .memWrite(memWrite),
     .address(outputData), // Use ALU result as address
-    .wdata(regWriteData), // Data from readData2 is written to memory
+    .wdata(readData2), // Data from readData2 is written to memory
     .rdata(memReadData)
 );
 RegisterFile registerFile (

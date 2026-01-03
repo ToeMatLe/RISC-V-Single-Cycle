@@ -279,7 +279,7 @@ endfunction
     assert (RF(18) == 32'd5)  else $fatal("JAL target block failed");
     assert (RF(20) == 32'd6)  else $fatal("JALR target block failed");
 
-    $display("✅ DataPath program completed — all checks passed.");
+    $display("DataPath program completed — all checks passed.");
     $finish;
   end
 

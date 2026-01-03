@@ -8,9 +8,9 @@ logic [31:0] data2;
 logic [31:0] outputData;
 
 ALU dut (
-    .operation  (operation),
-    .data1      (data1),
-    .data2      (data2),
+    .operation (operation),
+    .data1 (data1),
+    .data2 (data2),
     .outputData (outputData)
 );
 

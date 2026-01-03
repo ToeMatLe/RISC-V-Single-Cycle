@@ -52,17 +52,15 @@ always_comb begin
             memWrite = 1'b0; //disable memory write
             aluSrc = 1'b1; // second ALU operand from immediate
             branEnable = 1'b0; // disable branch
-            aluOp = (funct3 == 3'b000 && funct7 == 7'b0000000) ? ADD :
-                    (funct3 == 3'b000 && funct7 == 7'b0100000) ? SUB :
-                    (funct3 == 3'b100 && funct7 == 7'b0000000) ? XOR :
-                    (funct3 == 3'b110 && funct7 == 7'b0000000) ? OR :
-                    (funct3 == 3'b111 && funct7 == 7'b0000000) ? AND :
-                    (funct3 == 3'b001 && funct7 == 7'b0000000) ? SLL :
-                    (funct3 == 3'b101 && funct7 == 7'b0000000) ? SRL :
-                    (funct3 == 3'b101 && funct7 == 7'b0100000) ? SRA :
-                    (funct3 == 3'b010 && funct7 == 7'b0000000) ? SLT :
-                    (funct3 == 3'b011 && funct7 == 7'b0000000) ? SLTU :
-                    ADD; // default to ADD
+            aluOp = (funct3 == 3'b000) ? ADD :
+            (funct3 == 3'b100) ? XOR :
+            (funct3 == 3'b110) ? OR  :
+            (funct3 == 3'b111) ? AND :
+            (funct3 == 3'b001 && funct7==7'b0000000) ? SLL :
+            (funct3 == 3'b101 && funct7==7'b0000000) ? SRL :
+            (funct3 == 3'b101 && funct7==7'b0100000) ? SRA :
+            (funct3 == 3'b010) ? SLT :
+            (funct3 == 3'b011) ? SLTU : ADD;
         end
         STORE: begin 
             regWrite = 1'b0; //disable register write
