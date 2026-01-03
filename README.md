@@ -36,11 +36,8 @@ The reference was used to ensure correctness of:
 
 The overall processor architecture is based on the standard **single-cycle RISC-V datapath**, shown below. This diagram served as the reference for structuring the datapath, control signals, and data flow between modules.
 
-<p align="center">
-  <img src="Screenshot%202026-01-03%20at%202.35.50%20PM.png"
-       alt="RISC-V Single-Cycle Datapath Reference"
-       width="900">
-</p>
+<img width="1010" height="554" alt="Screenshot 2026-01-03 at 2 38 19 PM" src="https://github.com/user-attachments/assets/6c066a20-a5d6-4f5b-a277-b64faf9d476a" />
+
 
 ### Diagram Highlights
 - **Program Counter (PC)** with `PC + 4` and branch/jump target selection
