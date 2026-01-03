@@ -79,11 +79,23 @@ ALU alu (
 );
 
 // Check branch condition met
-logic branch_condition_met = 1'b0;   
-logic alu_zero_flag = 1'b0;   
-assign alu_zero_flag = (readData1 == readData2);
+// branch_taken signal depends on funct3 and register values
+logic branch_taken;
+always_comb begin
+  branch_taken = 1'b0;
+  if ((opcode == BRANCH) && branEnable) begin
+    case (funct3)
+        BEQ: branch_taken = (readData1 == readData2);
+        BNE: branch_taken = (readData1 != readData2);
+        BLT:  branch_taken = ($signed(readData1) <  $signed(readData2));
+        BGE:  branch_taken = ($signed(readData1) >= $signed(readData2));
+        BLTU: branch_taken = (readData1 < readData2);
+        BGEU: branch_taken = (readData1 >= readData2);
+        default: branch_taken = 1'b0;
+    endcase
+  end
+end
 assign branch_target_address = pcAddress + sign_extended_immediate;
-assign branch_condition_met = (opcode == BRANCH) && branEnable && alu_zero_flag;
 
 // Define JALR or JAL
 assign jump_target_address = (opcode == JALR) ? (readData1 + sign_extended_immediate) : (pcAddress + sign_extended_immediate);
@@ -92,7 +104,7 @@ ProgramCounter programCounter (
     .clk(clk),
     .reset_n(reset_n),
     .jump_enable(jumpEnable),
-    .branEnable(branch_condition_met),
+    .branEnable(branch_taken),
     .branAddress(branch_target_address),
     .jump_target_address(jump_target_address),
     .outputPCAddress(pcAddress)
@@ -108,7 +120,7 @@ always_comb begin
     if (opcode == LOAD)begin 
         regWriteData = memReadData;
     end
-    else if (opcode == JAL) begin 
+    else if (opcode == JAL || opcode == JALR) begin 
         regWriteData = pcPlus4;
     end
     else begin 
