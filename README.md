@@ -13,10 +13,6 @@ The design follows the classic **single-cycle datapath model** taught in compute
 Xilinx Vivado is an **industry-level hardware design tool** used for:
 - RTL design and behavioral simulation  
 - Gate-level and schematic generation  
-- FPGA implementation via **bitstream generation**
-
-Vivado enables this processor to be synthesized, analyzed, and deployed onto supported FPGA development boards.
-
 ---
 
 ## Instruction Set Reference
