@@ -28,15 +28,15 @@ always_comb begin
             outputData = data1 & data2;
         end
         SLL: begin 
-            outputData = data1 << data2;
+            outputData = data1 << data2[4:0];
         end
         // SRL works with unsigned
         SRL: begin 
-            outputData = data1 >> data2;
+            outputData = data1 >> data2[4:0];
         end
         // SRA works with signed
         SRA: begin 
-            outputData = $signed(data1) >>> data2; 
+            outputData = $signed(data1) >>> data2[4:0]; 
         end
         // STL works with signed
         SLT: begin 
